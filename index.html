@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HKDSE Chem · Section 5 Flashcards</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;1,9..40,300&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- ── Header ── -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-brand">
+        <span class="brand-icon">⚗</span>
+        <div>
+          <h1 class="brand-title">Section 5</h1>
+          <p class="brand-sub">Fossil Fuels & Carbon Compounds</p>
+        </div>
+      </div>
+      <div class="header-stats">
+        <div class="stat-pill" id="stat-total">
+          <span class="stat-num" id="stat-total-num">70</span>
+          <span class="stat-label">Cards</span>
+        </div>
+        <div class="stat-pill" id="stat-known">
+          <span class="stat-num" id="stat-known-num">0</span>
+          <span class="stat-label">Known</span>
+        </div>
+        <div class="stat-pill" id="stat-review">
+          <span class="stat-num" id="stat-review-num">0</span>
+          <span class="stat-label">Review</span>
+        </div>
+      </div>
+    </div>
+    <!-- Progress bar -->
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+  </header>
+
+  <!-- ── Controls ── -->
+  <section class="controls-bar">
+    <div class="controls-inner">
+
+      <!-- Topic filter -->
+      <div class="control-group">
+        <label class="control-label">Topic</label>
+        <div class="select-wrap">
+          <select id="topic-select" class="control-select"></select>
+        </div>
+      </div>
+
+      <!-- Difficulty filter -->
+      <div class="control-group">
+        <label class="control-label">Difficulty</label>
+        <div class="difficulty-chips">
+          <button class="chip chip-all active" data-diff="all">All</button>
+          <button class="chip chip-easy" data-diff="easy">Easy</button>
+          <button class="chip chip-medium" data-diff="medium">Medium</button>
+          <button class="chip chip-hard" data-diff="hard">Hard</button>
+        </div>
+      </div>
+
+      <!-- Shuffle -->
+      <button class="btn-shuffle" id="btn-shuffle" title="Shuffle cards">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
+        Shuffle
+      </button>
+
+      <!-- Reset progress -->
+      <button class="btn-reset" id="btn-reset" title="Reset all progress">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+        Reset
+      </button>
+    </div>
+  </section>
+
+  <!-- ── Card counter ── -->
+  <div class="card-counter-row">
+    <span class="card-counter" id="card-counter">Card 1 of 70</span>
+    <div class="card-nav-mini">
+      <button class="nav-btn" id="btn-prev" aria-label="Previous card">&#8592;</button>
+      <button class="nav-btn" id="btn-next" aria-label="Next card">&#8594;</button>
+    </div>
+  </div>
+
+  <!-- ── Flashcard Stage ── -->
+  <main class="stage">
+    <div class="card-scene" id="card-scene">
+      <div class="card" id="flashcard">
+        <!-- FRONT -->
+        <div class="card-face card-front">
+          <div class="card-meta">
+            <span class="card-topic" id="card-topic-front"></span>
+            <span class="card-diff" id="card-diff-front"></span>
+          </div>
+          <div class="card-body">
+            <p class="card-question" id="card-question"></p>
+          </div>
+          <div class="card-hint">Click to reveal answer</div>
+        </div>
+        <!-- BACK -->
+        <div class="card-face card-back">
+          <div class="card-meta">
+            <span class="card-topic" id="card-topic-back"></span>
+            <span class="card-diff" id="card-diff-back"></span>
+          </div>
+          <div class="card-body">
+            <p class="card-answer" id="card-answer"></p>
+          </div>
+          <div class="card-actions">
+            <button class="action-btn action-no" id="btn-no">
+              <span class="action-icon">✗</span> Still Learning
+            </button>
+            <button class="action-btn action-yes" id="btn-yes">
+              <span class="action-icon">✓</span> Got It!
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty state -->
+    <div class="empty-state" id="empty-state" style="display:none;">
+      <div class="empty-icon">🔬</div>
+      <p>No cards match your filters.<br>Try a different topic or difficulty.</p>
+    </div>
+
+    <!-- Completion screen -->
+    <div class="completion-screen" id="completion-screen" style="display:none;">
+      <div class="completion-inner">
+        <div class="completion-icon">🎉</div>
+        <h2 class="completion-title">Deck Complete!</h2>
+        <p class="completion-sub" id="completion-sub"></p>
+        <div class="completion-stats" id="completion-stats"></div>
+        <button class="btn-restart" id="btn-restart">Start Again</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- ── Keyboard hint ── -->
+  <footer class="kbd-hint">
+    <kbd>Space</kbd> flip &nbsp;·&nbsp;
+    <kbd>←</kbd> prev &nbsp;·&nbsp;
+    <kbd>→</kbd> next &nbsp;·&nbsp;
+    <kbd>Y</kbd> got it &nbsp;·&nbsp;
+    <kbd>N</kbd> learning
+  </footer>
+
+  <script src="flashcards.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
