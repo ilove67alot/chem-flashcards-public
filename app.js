@@ -1,10 +1,12 @@
+
+App · JS
 /* ════════════════════════════════════════════
    HKDSE Chemistry Flashcards — app.js
    ════════════════════════════════════════════ */
-
+ 
 (function () {
   'use strict';
-
+ 
   // ── State ────────────────────────────────────────────────────────────────
   const state = {
     deck:       [],        // filtered + ordered cards
@@ -15,9 +17,10 @@
     filterTopic: 'All',
     filterDiff:  'all',
   };
-
+ 
   // ── DOM refs ─────────────────────────────────────────────────────────────
   const $card         = document.getElementById('flashcard');
+  const $cardFront    = $card.querySelector('.card-front');
   const $scene        = document.getElementById('card-scene');
   const $question     = document.getElementById('card-question');
   const $answer       = document.getElementById('card-answer');
@@ -43,7 +46,7 @@
   const $completionScreen = document.getElementById('completion-screen');
   const $completionSub    = document.getElementById('completion-sub');
   const $completionStats  = document.getElementById('completion-stats');
-
+ 
   // ── Initialise ───────────────────────────────────────────────────────────
   function init() {
     buildTopicSelect();
@@ -52,7 +55,7 @@
     loadProgress();
     renderStats();
   }
-
+ 
   // ── Topic select ─────────────────────────────────────────────────────────
   function buildTopicSelect() {
     $topicSelect.innerHTML = '';
@@ -63,7 +66,7 @@
       $topicSelect.appendChild(opt);
     });
   }
-
+ 
   // ── Filter + build deck ──────────────────────────────────────────────────
   function applyFilters() {
     const { filterTopic, filterDiff } = state;
@@ -77,16 +80,16 @@
     renderCard(true);
     renderStats();
   }
-
+ 
   // ── Render card ──────────────────────────────────────────────────────────
   function renderCard(animate = false) {
     const { deck, index } = state;
-
+ 
     // hide/show completion & empty states
     $completionScreen.style.display = 'none';
     $emptyState.style.display       = 'none';
     $scene.style.display            = '';
-
+ 
     if (deck.length === 0) {
       $scene.style.display     = 'none';
       $emptyState.style.display = 'block';
@@ -94,14 +97,14 @@
       updateNavButtons();
       return;
     }
-
+ 
     if (index >= deck.length) {
       showCompletion();
       return;
     }
-
+ 
     const card = deck[index];
-
+ 
     // Unflip without animation if coming from flip
     if (state.isFlipped) {
       $card.style.transition = 'none';
@@ -110,7 +113,7 @@
       $card.style.transition = '';
       state.isFlipped = false;
     }
-
+ 
     $question.textContent     = card.question;
     $answer.textContent       = card.answer;
     $topicFront.textContent   = card.topic;
@@ -119,25 +122,25 @@
     $diffBack.textContent     = $diffFront.textContent;
     $diffFront.className      = 'card-diff ' + card.difficulty;
     $diffBack.className       = 'card-diff ' + card.difficulty;
-
+ 
     $counter.textContent = `Card ${index + 1} of ${deck.length}`;
-
+ 
     if (animate) {
       $scene.classList.remove('entering');
       void $scene.offsetWidth; // reflow
       $scene.classList.add('entering');
     }
-
+ 
     updateNavButtons();
   }
-
+ 
   // ── Flip ─────────────────────────────────────────────────────────────────
   function flipCard() {
     if (state.deck.length === 0 || state.index >= state.deck.length) return;
     state.isFlipped = !state.isFlipped;
     $card.classList.toggle('is-flipped', state.isFlipped);
   }
-
+ 
   // ── Navigation ───────────────────────────────────────────────────────────
   function goNext() {
     if (state.index < state.deck.length) {
@@ -146,7 +149,7 @@
       renderCard(true);
     }
   }
-
+ 
   function goPrev() {
     if (state.index > 0) {
       state.index--;
@@ -154,12 +157,12 @@
       renderCard(true);
     }
   }
-
+ 
   function updateNavButtons() {
     $btnPrev.disabled = state.index === 0;
     $btnNext.disabled = state.index >= state.deck.length;
   }
-
+ 
   // ── Mark known / review ──────────────────────────────────────────────────
   function markKnown() {
     if (!state.isFlipped) return;
@@ -171,7 +174,7 @@
     renderStats();
     goNext();
   }
-
+ 
   function markReview() {
     if (!state.isFlipped) return;
     const card = state.deck[state.index];
@@ -182,20 +185,20 @@
     renderStats();
     goNext();
   }
-
+ 
   // ── Stats & Progress Bar ─────────────────────────────────────────────────
   function renderStats() {
     const total   = state.deck.length;
     const known   = [...state.known].filter(id => state.deck.find(c => c.id === id)).length;
     const review  = [...state.review].filter(id => state.deck.find(c => c.id === id)).length;
     const pct     = total > 0 ? Math.round((known / total) * 100) : 0;
-
+ 
     $statTotal.textContent  = total;
     $statKnown.textContent  = known;
     $statReview.textContent = review;
     $progressFill.style.width = pct + '%';
   }
-
+ 
   // ── Shuffle ──────────────────────────────────────────────────────────────
   function shuffle(arr) {
     for (let i = arr.length - 1; i > 0; i--) {
@@ -204,24 +207,24 @@
     }
     return arr;
   }
-
+ 
   function shuffleDeck() {
     shuffle(state.deck);
     state.index    = 0;
     state.isFlipped = false;
     renderCard(true);
   }
-
+ 
   // ── Completion ───────────────────────────────────────────────────────────
   function showCompletion() {
     $scene.style.display = 'none';
     $completionScreen.style.display = 'flex';
-
+ 
     const known  = [...state.known].filter(id => state.deck.find(c => c.id === id)).length;
     const review = [...state.review].filter(id => state.deck.find(c => c.id === id)).length;
     const total  = state.deck.length;
     const pct    = total > 0 ? Math.round((known / total) * 100) : 0;
-
+ 
     $completionSub.textContent = `You went through all ${total} cards in this deck.`;
     $completionStats.innerHTML = `
       <div class="completion-stat">
@@ -238,7 +241,7 @@
       </div>
     `;
   }
-
+ 
   function restartDeck() {
     state.index    = 0;
     state.isFlipped = false;
@@ -246,7 +249,7 @@
     $scene.style.display = '';
     renderCard(true);
   }
-
+ 
   // ── Reset progress ───────────────────────────────────────────────────────
   function resetProgress() {
     if (!confirm('Reset all progress? Your "Got It" and "Still Learning" marks will be cleared.')) return;
@@ -260,7 +263,7 @@
     $scene.style.display = '';
     renderCard(true);
   }
-
+ 
   // ── LocalStorage persistence ─────────────────────────────────────────────
   function saveProgress() {
     try {
@@ -268,7 +271,7 @@
       localStorage.setItem('chem5_review', JSON.stringify([...state.review]));
     } catch(e) { /* storage unavailable */ }
   }
-
+ 
   function loadProgress() {
     try {
       const k = localStorage.getItem('chem5_known');
@@ -278,35 +281,35 @@
     } catch(e) {}
     renderStats();
   }
-
+ 
   // ── Event Binding ─────────────────────────────────────────────────────────
   function bindEvents() {
-    // Flip on card click
-    $card.addEventListener('click', flipCard);
-
+    // Flip only when clicking the front face
+    $cardFront.addEventListener('click', flipCard);
+ 
     // Navigation
     $btnNext.addEventListener('click', e => { e.stopPropagation(); goNext(); });
     $btnPrev.addEventListener('click', e => { e.stopPropagation(); goPrev(); });
-
+ 
     // Actions (prevent card flip propagation)
     $btnYes.addEventListener('click', e => { e.stopPropagation(); markKnown(); });
     $btnNo.addEventListener('click',  e => { e.stopPropagation(); markReview(); });
-
+ 
     // Shuffle
     $btnShuffle.addEventListener('click', shuffleDeck);
-
+ 
     // Reset
     $btnReset.addEventListener('click', resetProgress);
-
+ 
     // Restart
     $btnRestart.addEventListener('click', restartDeck);
-
+ 
     // Topic filter
     $topicSelect.addEventListener('change', () => {
       state.filterTopic = $topicSelect.value;
       applyFilters();
     });
-
+ 
     // Difficulty chips
     $chips.forEach(chip => {
       chip.addEventListener('click', () => {
@@ -316,12 +319,12 @@
         applyFilters();
       });
     });
-
+ 
     // Keyboard shortcuts
     document.addEventListener('keydown', e => {
       // Ignore if typing in input
       if (['INPUT','SELECT','TEXTAREA'].includes(e.target.tagName)) return;
-
+ 
       switch (e.key) {
         case ' ':
         case 'Enter':
@@ -347,8 +350,8 @@
       }
     });
   }
-
+ 
   // ── Boot ─────────────────────────────────────────────────────────────────
   init();
-
+ 
 })();
